@@ -1,0 +1,26 @@
+{
+  "title": "WordPress Basic Metrics",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage",
+      "targets": [
+        { "expr": "rate(node_cpu_seconds_total{mode!='idle'}[1m])", "legendFormat": "CPU" }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Memory Usage (%)",
+      "targets": [
+        { "expr": "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100", "legendFormat": "Free Mem %" }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "System Load",
+      "targets": [
+        { "expr": "node_load1", "legendFormat": "Load 1m" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"> <!-- Evita errores de codificación -->
+  <title>Servidor ${nombre}</title> <!-- Nombre del contenedor como título -->
+  <style>
+    body { font-family: sans-serif; text-align: center; background-color: #f0f0f0; padding-top: 50px; }
+    h1 { color: #333; }
+  </style>
+</head>
+<body>
+  <h1>${mensaje}</h1> <!-- Mensaje HTML personalizado -->
+  <p>Servidor generado automáticamente con <strong>Terraform</strong> 🤖</p>
+  <p>Contenedor: <code>${nombre}</code></p> <!-- Nombre del contenedor -->
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Configuración de eventos (requerido por NGINX aunque vacío aquí)
+events {}
+
+http {
+  # Definimos un grupo de servidores backend que serán balanceados
+  upstream backend {
+%{ for srv in backends ~}
+    ${srv}     # Ejemplo generado: server nginx-settling-polecat:80;
+%{ endfor ~}
+  }
+
+  # Definimos el servidor principal que escucha peticiones externas
+  server {
+    listen 80;
+
+    location / {
+      # Redirige las peticiones al grupo de servidores "backend"
+      proxy_pass http://backend;
+    }
+  }
+}

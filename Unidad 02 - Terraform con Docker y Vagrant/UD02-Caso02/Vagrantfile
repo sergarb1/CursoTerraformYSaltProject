@@ -1,0 +1,17 @@
+Vagrant.configure("2") do |config|
+  # 💻 Box pública de Windows 10 (versión de evaluación)
+  config.vm.box = "gusztavvargadr/windows-10"
+
+  # 📡 Usamos WinRM como protocolo de comunicación (requerido por Windows)
+  config.vm.communicator = "winrm"
+
+  # 🔁 Mapeamos el puerto RDP 3389 de la VM al host local (mismo puerto)
+  config.vm.network "forwarded_port", guest: 3389, host: 3389
+
+  # 🧰 Configuramos recursos de hardware con VirtualBox
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = true        # Mostrar la GUI (entorno gráfico)
+    vb.memory = 2048     # Asignar 2 GB de RAM
+    vb.cpus = 1          # Asignar 1 CPU
+  end
+end

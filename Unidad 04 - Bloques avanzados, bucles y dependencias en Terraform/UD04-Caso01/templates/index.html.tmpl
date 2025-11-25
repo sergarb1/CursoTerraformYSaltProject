@@ -1,0 +1,55 @@
+<!-- 
+  Este archivo es una plantilla HTML que será procesada por Terraform 
+  utilizando la función templatefile().
+  Las variables ${nombre} y ${mensaje} serán reemplazadas dinámicamente
+  por valores definidos en el archivo Terraform.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 
+    El título de la pestaña del navegador incluirá el nombre del contenedor.
+    Este valor se genera con la función 'random_pet' desde Terraform.
+  -->
+  <title>Servidor ${nombre}</title>
+  <meta charset="UTF-8">
+
+  <!-- 
+    Estilo básico para que la página se vea más bonita.
+    Se centra el texto y se usa una fuente legible.
+  -->
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f2f2f2;
+      padding-top: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 
+    Este encabezado mostrará el mensaje HTML definido por el usuario 
+    en la variable 'html_message' desde Terraform.
+  -->
+  <h1>${mensaje}</h1>
+
+  <!-- 
+    Texto informativo para que el alumno o usuario sepa 
+    que esta página fue generada automáticamente por Terraform.
+  -->
+  <p>Servidor generado automáticamente con <strong>Terraform</strong> 🤖</p>
+
+  <!-- 
+    Se muestra el nombre del contenedor Docker en la página.
+    Este nombre fue generado automáticamente con random_pet.
+  -->
+  <p>Contenedor: <code>${nombre}</code></p>
+</body>
+</html>

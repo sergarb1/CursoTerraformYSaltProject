@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cheat Sheet · UD01 – Introducción y fundamentos de Terraform (Tema claro con iconos)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafc;color:#1e1e1e;line-height:1.6;padding:24px}
+    h1,h2,h3{color:#0052cc}
+    h1{font-size:2em;margin-bottom:0.3em}
+    h2{border-bottom:2px solid #e5e7eb;padding-bottom:0.2em;margin-top:1em}
+    code,pre{background:#f0f2f5;color:#111;padding:4px 6px;border-radius:6px;font-size:0.9em}
+    pre{padding:12px;overflow-x:auto}
+    .tip{background:#e8f2ff;border-left:4px solid #0052cc;padding:10px;border-radius:8px;margin:10px 0}
+    .warn{background:#fff6e5;border-left:4px solid #ff9f1c;padding:10px;border-radius:8px;margin:10px 0}
+    .ok{background:#e8f8f0;border-left:4px solid #2ecc71;padding:10px;border-radius:8px;margin:10px 0}
+    ul{margin-left:20px}
+    section{margin-bottom:30px;padding:20px;background:#ffffff;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+    i{color:#0052cc;margin-right:6px}
+  </style>
+</head>
+<body>
+<h1><i class="bi bi-cloud-check"></i>UD01 · Introducción y fundamentos de Terraform</h1>
+<p>Guía explicativa y visual en tema claro para comprender la <strong>Infraestructura como Código</strong> y el flujo de trabajo de <strong>Terraform</strong>.</p>
+
+<section id="iac">
+<h2><i class="bi bi-braces"></i> 1 · Infraestructura como Código (IaC)</h2>
+<p><strong>Idea principal:</strong> Automatizar la creación y configuración de la infraestructura mediante archivos de texto, como si programaras tus servidores.</p>
+<p>En lugar de crear máquinas o redes manualmente, describes su estado deseado. Terraform luego se encarga de construirlo, igual que un arquitecto sigue los planos de un edificio.</p>
+<div class="tip"><i class="bi bi-lightbulb"></i> <strong>Ventajas:</strong> reproducibilidad, control de versiones, rapidez en despliegues y facilidad para probar y destruir entornos.</div>
+<ul>
+  <li><i class="bi bi-gear"></i> <strong>Imperativo:</strong> dices <em>cómo</em> hacerlo paso a paso.</li>
+  <li><i class="bi bi-check2-circle"></i> <strong>Declarativo:</strong> defines <em>qué</em> quieres obtener, y la herramienta decide cómo lograrlo.</li>
+</ul>
+</section>
+
+<section id="terraform">
+<h2><i class="bi bi-cpu"></i> 2 · ¿Qué es Terraform?</h2>
+<p>Es una herramienta de <strong>Infraestructura como Código</strong> creada por <strong>HashiCorp</strong>. Usa el lenguaje <strong>HCL</strong> para describir tu infraestructura en archivos <code>.tf</code>.</p>
+<p><i class="bi bi-cloud"></i> Funciona con múltiples proveedores: AWS, Azure, GCP, GitHub, local, etc.</p>
+<div class="ok"><i class="bi bi-check2"></i> Terraform es <strong>declarativo</strong>: tú defines el resultado y él se encarga de ejecutarlo.</div>
+<p><strong>Casos de uso:</strong></p>
+<ul>
+  <li><i class="bi bi-diagram-3"></i> Crear redes, máquinas virtuales o bases de datos.</li>
+  <li><i class="bi bi-bug"></i> Automatizar entornos de testing.</li>
+  <li><i class="bi bi-globe"></i> Gestionar DNS, usuarios o servicios SaaS.</li>
+</ul>
+</section>
+
+<section id="instalacion">
+<h2><i class="bi bi-tools"></i> 3 · Instalación</h2>
+<ul>
+  <li><i class="bi bi-terminal"></i> <strong>Linux:</strong> <code>sudo apt install terraform</code></li>
+  <li><i class="bi bi-terminal"></i> <strong>macOS:</strong> <code>brew install hashicorp/tap/terraform</code></li>
+  <li><i class="bi bi-terminal"></i> <strong>Windows:</strong> <code>choco install terraform</code></li>
+</ul>
+<p>Verifica con <code>terraform version</code>. Si ves la versión, todo está correcto.</p>
+</section>
+
+<section id="cli">
+<h2><i class="bi bi-play-circle"></i> 4 · Primer contacto con el CLI</h2>
+<p>Un ejemplo básico que genera un archivo local <code>hello.txt</code>:</p>
+<pre><code>provider "local" {}
+resource "local_file" "hello" {
+  filename = "${path.module}/hello.txt"
+  content  = "¡Hola mundo Terraform!"
+}</code></pre>
+<ul>
+  <li><i class="bi bi-arrow-repeat"></i> <code>terraform init</code>: descarga plugins necesarios.</li>
+  <li><i class="bi bi-search"></i> <code>terraform plan</code>: muestra los cambios.</li>
+  <li><i class="bi bi-hammer"></i> <code>terraform apply</code>: aplica la configuración.</li>
+  <li><i class="bi bi-trash"></i> <code>terraform destroy</code>: borra los recursos.</li>
+</ul>
+<div class="tip"><i class="bi bi-lightbulb"></i> Usa <code>plan</code> antes de <code>apply</code> para evitar errores.</div>
+</section>
+
+<section id="estructura">
+<h2><i class="bi bi-folder2-open"></i> 5 · Estructura de proyecto</h2>
+<ul>
+  <li><i class="bi bi-file-earmark-code"></i> <code>main.tf</code>: recursos principales.</li>
+  <li><i class="bi bi-input-cursor-text"></i> <code>variables.tf</code>: variables.</li>
+  <li><i class="bi bi-box-arrow-up"></i> <code>outputs.tf</code>: salidas.</li>
+</ul>
+<pre><code>variable "message" { default = "Hola Terraform" }
+resource "local_file" "msg" {
+  filename = "mensaje.txt"
+  content  = var.message
+}
+output "file_path" {
+  value = local_file.msg.filename
+}</code></pre>
+</section>
+
+<section id="ciclo">
+<h2><i class="bi bi-arrow-clockwise"></i> 6 · Ciclo de vida</h2>
+<p><i class="bi bi-diagram-3"></i> <code>init → plan → apply → destroy</code></p>
+<div class="ok"><i class="bi bi-check2-circle"></i> Este flujo te asegura despliegues reproducibles y controlados.</div>
+</section>
+
+<section id="estado">
+<h2><i class="bi bi-file-earmark-lock"></i> 7 · Estado (tfstate) y seguridad</h2>
+<p>Terraform guarda el estado en <code>terraform.tfstate</code>, con todos los recursos creados.</p>
+<ul>
+  <li><i class="bi bi-lock"></i> No lo edites ni lo subas a GitHub.</li>
+  <li><i class="bi bi-cloud-check"></i> Usa backends remotos (S3, GCS).</li>
+</ul>
+<pre><code>terraform {
+  backend "s3" {
+    bucket = "mi-bucket"
+    key    = "infra/terraform.tfstate"
+    region = "eu-west-1"
+  }
+}</code></pre>
+</section>
+
+<section id="providers">
+<h2><i class="bi bi-plugin"></i> 8 · Providers</h2>
+<p>Permiten que Terraform se comunique con APIs externas.</p>
+<ul>
+  <li><i class="bi bi-file-earmark-text"></i> <strong>local:</strong> crea archivos locales.</li>
+  <li><i class="bi bi-cursor"></i> <strong>null:</strong> ejecuta comandos.</li>
+  <li><i class="bi bi-shield-lock"></i> <strong>random:</strong> genera contraseñas seguras.</li>
+</ul>
+</section>
+
+<section id="caso">
+<h2><i class="bi bi-lightning"></i> 9 · Caso práctico: Token + archivo</h2>
+<p><i class="bi bi-gear-wide-connected"></i> Automatiza un flujo completo:</p>
+<pre><code>resource "random_password" "token" {
+  length  = 12
+  special = true
+}
+resource "local_file" "file" {
+  filename = "${path.module}/token.txt"
+  content  = "Token: ${random_password.token.result}"
+}
+resource "null_resource" "notify" {
+  provisioner "local-exec" {
+    command = "echo 'Archivo creado'"
+  }
+}</code></pre>
+</section>
+
+<p style="text-align:center;color:#0052cc;margin-top:40px"><i class="bi bi-mortarboard"></i> Cheat Sheet UD01</p>
+</body>
+</html>

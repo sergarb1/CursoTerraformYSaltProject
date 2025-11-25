@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cheat Sheet · UD05 – Terraform + Salt Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafc;color:#1e1e1e;line-height:1.6;padding:24px}
+    h1,h2,h3{color:#0052cc}
+    h1{font-size:2em;margin-bottom:0.3em}
+    h2{border-bottom:2px solid #e5e7eb;padding-bottom:0.2em;margin-top:1em}
+    code,pre{background:#f0f2f5;color:#111;padding:4px 6px;border-radius:6px;font-size:0.9em}
+    pre{padding:12px;overflow-x:auto}
+    .tip{background:#e8f2ff;border-left:4px solid #0052cc;padding:10px;border-radius:8px;margin:10px 0}
+    .warn{background:#fff6e5;border-left:4px solid #ff9f1c;padding:10px;border-radius:8px;margin:10px 0}
+    .ok{background:#e8f8f0;border-left:4px solid #2ecc71;padding:10px;border-radius:8px;margin:10px 0}
+    ul{margin-left:20px}
+    section{margin-bottom:30px;padding:20px;background:#ffffff;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+    i{color:#0052cc;margin-right:6px}
+  </style>
+</head>
+<body>
+
+<h1><i class="bi bi-gear-wide-connected"></i>UD05 · Terraform + Salt Project</h1>
+<p>Cheat Sheet avanzada con múltiples ejemplos reales de Salt y su integración con Terraform.</p>
+
+<section>
+<h2><i class="bi bi-terminal"></i> 1 · Comandos básicos de Salt</h2>
+<ul>
+  <li><code>salt '*' test.ping</code> → prueba conexión Minion</li>
+  <li><code>salt '*' grains.items</code> → ver datos del sistema</li>
+  <li><code>salt '*' cmd.run 'uptime'</code> → ejecutar comandos shell</li>
+  <li><code>salt-call state.apply</code> → ejecutar estado localmente (modo minion sin master)</li>
+  <li><code>salt-run jobs.active</code> → ver trabajos activos</li>
+</ul>
+</section>
+
+<section>
+<h2><i class="bi bi-filetype-yml"></i> 2 · Ejemplos de archivos `.sls`</h2>
+
+<h3><i class="bi bi-hdd-network"></i> nginx.sls</h3>
+<pre><code>nginx:
+  pkg.installed
+  service.running:
+    - enable: True
+    - require:
+      - pkg: nginx</code></pre>
+
+<h3><i class="bi bi-box-seam"></i> git.sls</h3>
+<pre><code>git:
+  pkg.installed
+
+/clones/mi-repo:
+  git.latest:
+    - name: https://github.com/usuario/repo.git
+    - require:
+      - pkg: git</code></pre>
+
+<h3><i class="bi bi-filetype-txt"></i> file.sls</h3>
+<pre><code>/etc/mensaje.txt:
+  file.managed:
+    - source: salt://archivos/mensaje.txt
+    - user: root
+    - mode: 644</code></pre>
+
+<h3><i class="bi bi-cpu-fill"></i> apache.sls (condicional con grains)</h3>
+<pre><code>{% if grains['os_family'] == 'Debian' %}
+apache2:
+  pkg.installed
+  service.running:
+    - name: apache2
+{% else %}
+httpd:
+  pkg.installed
+  service.running:
+    - name: httpd
+{% endif %}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-database-fill-lock"></i> 3 · Pillars: datos externos y secretos</h2>
+
+<h3><i class="bi bi-diagram-3-fill"></i> Top file de pillar</h3>
+<pre><code>base:
+  '*':
+    - passwords</code></pre>
+
+<h3><i class="bi bi-file-lock-fill"></i> passwords.sls</h3>
+<pre><code>db_root: "sup3rS3cret"
+user_pass: "salted123"</code></pre>
+
+<h3><i class="bi bi-file-earmark-lock"></i> Uso en estado</h3>
+<pre><code>set-pass:
+  cmd.run:
+    - name: "echo {{ pillar['user_pass'] }} > /tmp/pass.txt"</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-link-45deg"></i> 4 · Integración con Terraform</h2>
+
+<h3><i class="bi bi-cpu"></i> local-exec</h3>
+<pre><code>resource "null_resource" "salt" {
+  provisioner "local-exec" {
+    command = "salt '*' state.apply"
+  }
+}</code></pre>
+
+<h3><i class="bi bi-router-fill"></i> remote-exec (desde VM)</h3>
+<pre><code>provisioner "remote-exec" {
+  inline = [
+    "sudo salt-call state.apply nginx"
+  ]
+}</code></pre>
+
+<h3><i class="bi bi-receipt"></i> outputs → pillars</h3>
+<pre><code>output "web_ip" {
+  value = aws_instance.web.public_ip
+}</code></pre>
+<p>Puedes usarlo para inyectar dinámicamente a un `.sls` usando templates, env vars o `local-exec` + `pillar.set`.</p>
+</section>
+
+<section>
+<h2><i class="bi bi-diagram-2"></i> 5 · Orquestación en Salt</h2>
+<pre><code># /srv/salt/deploy_stack.sls
+include:
+  - docker
+  - nginx
+  - app
+
+app-deploy:
+  cmd.run:
+    - name: "docker compose up -d"
+    - require:
+      - service: docker</code></pre>
+
+<p>Ejecutar:</p>
+<code>salt-run state.orchestrate deploy_stack</code>
+</section>
+
+<section>
+<h2><i class="bi bi-collection"></i> 6 · Targeting avanzado</h2>
+<ul>
+  <li><code>salt -G 'os:Ubuntu' test.ping</code> → por grain</li>
+  <li><code>salt -E 'web[0-9]' cmd.run 'uptime'</code> → por regex</li>
+  <li><code>salt -L 'web1,web2' test.ping</code> → lista separada por coma</li>
+  <li><code>salt -C 'G@os:Debian and web*' test.ping</code> → combinación compuesta</li>
+</ul>
+</section>
+
+<p style="text-align:center;color:#0052cc;margin-top:40px"><i class="bi bi-mortarboard"></i> Cheat Sheet UD05 – Terraform + Salt · Full Edition</p>
+</body>
+</html>

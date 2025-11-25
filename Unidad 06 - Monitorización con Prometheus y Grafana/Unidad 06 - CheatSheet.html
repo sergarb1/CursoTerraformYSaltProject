@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cheat Sheet · UD06 – Prometheus + Grafana</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafc;color:#1e1e1e;line-height:1.6;padding:24px}
+    h1,h2,h3{color:#0052cc}
+    h1{font-size:2em;margin-bottom:0.3em}
+    h2{border-bottom:2px solid #e5e7eb;padding-bottom:0.2em;margin-top:1em}
+    code,pre{background:#f0f2f5;color:#111;padding:4px 6px;border-radius:6px;font-size:0.9em}
+    pre{padding:12px;overflow-x:auto}
+    .tip{background:#e8f2ff;border-left:4px solid #0052cc;padding:10px;border-radius:8px;margin:10px 0}
+    .warn{background:#fff6e5;border-left:4px solid #ff9f1c;padding:10px;border-radius:8px;margin:10px 0}
+    .ok{background:#e8f8f0;border-left:4px solid #2ecc71;padding:10px;border-radius:8px;margin:10px 0}
+    ul{margin-left:20px}
+    section{margin-bottom:30px;padding:20px;background:#ffffff;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+    i{color:#0052cc;margin-right:6px}
+  </style>
+</head>
+<body>
+
+<h1><i class="bi bi-bar-chart-line-fill"></i>UD06 · Prometheus + Grafana</h1>
+<p>Chuleta rápida de monitorización de infraestructura IaC con Terraform, Prometheus y Grafana.</p>
+
+<section>
+<h2><i class="bi bi-eye-fill"></i> 1 · Monitorización en IaC</h2>
+<p>Observar el estado de los sistemas es esencial en Infraestructura como Código (IaC). Terraform despliega infra, pero <b>no monitoriza</b>. Aquí es donde entran Prometheus y Grafana:</p>
+<ul>
+  <li>📊 Rendimiento (CPU, RAM, red...)</li>
+  <li>🧩 Disponibilidad (estado de servicios, contenedores...)</li>
+  <li>🚨 Alertas tempranas y logs históricos</li>
+</ul>
+</section>
+
+<section>
+<h2><i class="bi bi-graph-up-arrow"></i> 2 · Prometheus – Recolección de Métricas</h2>
+<ul>
+  <li>🕵 Modelo <b>pull</b>: Prometheus recoge métricas desde endpoints</li>
+  <li>💾 Base de datos interna optimizada (sin dependencias externas)</li>
+  <li>🧮 Lenguaje de consultas <b>PromQL</b></li>
+  <li>⚙️ Exporters: <code>node_exporter</code>, <code>cAdvisor</code>, etc.</li>
+</ul>
+
+<h3><i class="bi bi-gear"></i> Ejemplo prometheus.yml</h3>
+<pre><code>global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: "node_exporter"
+    static_configs:
+      - targets: ["node_exporter:9100"]
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-kanban-fill"></i> 3 · Grafana – Visualización</h2>
+<ul>
+  <li>🎨 Dashboards exportables en JSON</li>
+  <li>🔗 Compatible con Prometheus, InfluxDB, Loki, etc.</li>
+  <li>🔔 Alertas visuales o por Slack/webhook</li>
+  <li>👥 Roles y control de acceso</li>
+</ul>
+
+<h3><i class="bi bi-bar-chart-fill"></i> Ejemplo PromQL para CPU</h3>
+<code>rate(node_cpu_seconds_total{mode!="idle"}[1m])</code>
+</section>
+
+<section>
+<h2><i class="bi bi-diagram-3-fill"></i> 4 · Terraform + Docker</h2>
+<p>Terraform despliega infra y contenedores. Así definimos Prometheus + Grafana:</p>
+
+<h3><i class="bi bi-box"></i> Prometheus</h3>
+<pre><code>resource "docker_container" "prometheus" {
+  image = "prom/prometheus:latest"
+  ports {
+    internal = 9090
+    external = 9090
+  }
+  mounts {
+    type   = "bind"
+    source = abspath("${path.module}/prometheus.yml")
+    target = "/etc/prometheus/prometheus.yml"
+  }
+}</code></pre>
+
+<h3><i class="bi bi-bar-chart-line-fill"></i> Grafana</h3>
+<pre><code>resource "docker_container" "grafana" {
+  image = "grafana/grafana:latest"
+  ports {
+    internal = 3000
+    external = 3000
+  }
+  depends_on = [docker_container.prometheus]
+  env = [
+    "GF_SECURITY_ADMIN_USER=admin",
+    "GF_SECURITY_ADMIN_PASSWORD=admin"
+  ]
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-diagram-2-fill"></i> 5 · Flujo de datos e integración</h2>
+<ul>
+  <li>🛰 <b>node_exporter</b> → métricas expuestas en <code>:9100/metrics</code></li>
+  <li>📡 Prometheus las recoge y almacena</li>
+  <li>🖥 Grafana consulta a Prometheus vía HTTP</li>
+</ul>
+<p>💡 Se puede automatizar todo en Terraform, incluso dashboards (JSON) con provisión automática.</p>
+
+<h3><i class="bi bi-code-slash"></i> Dashboard JSON básico</h3>
+<pre><code>{
+  "title": "WordPress Basic Metrics",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage",
+      "targets": [
+        {
+          "expr": "rate(node_cpu_seconds_total{mode!='idle'}[1m])",
+          "legendFormat": "CPU"
+        }
+      ]
+    }
+  ]
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-lightbulb-fill"></i> 6 · Buenas prácticas</h2>
+<ul>
+  <li>📂 Versiona dashboards JSON en Git</li>
+  <li>🔐 Usa variables para contraseñas (no en <code>main.tf</code>)</li>
+  <li>🧱 Separa módulos Terraform: <code>modules/monitoring</code></li>
+  <li>💾 Usa volúmenes Docker para persistencia de métricas</li>
+</ul>
+</section>
+
+<p style="text-align:center;color:#0052cc;margin-top:40px"><i class="bi bi-mortarboard"></i> Cheat Sheet UD06 – Prometheus + Grafana · Full Edition</p>
+</body>
+</html>

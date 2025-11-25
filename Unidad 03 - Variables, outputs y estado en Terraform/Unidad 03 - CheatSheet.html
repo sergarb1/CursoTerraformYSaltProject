@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cheat Sheet · UD03 – Variables, Outputs y Estado en Terraform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafc;color:#1e1e1e;line-height:1.6;padding:24px}
+    h1,h2,h3{color:#0052cc}
+    h1{font-size:2em;margin-bottom:0.3em}
+    h2{border-bottom:2px solid #e5e7eb;padding-bottom:0.2em;margin-top:1em}
+    code,pre{background:#f0f2f5;color:#111;padding:4px 6px;border-radius:6px;font-size:0.9em}
+    pre{padding:12px;overflow-x:auto}
+    .tip{background:#e8f2ff;border-left:4px solid #0052cc;padding:10px;border-radius:8px;margin:10px 0}
+    .warn{background:#fff6e5;border-left:4px solid #ff9f1c;padding:10px;border-radius:8px;margin:10px 0}
+    .ok{background:#e8f8f0;border-left:4px solid #2ecc71;padding:10px;border-radius:8px;margin:10px 0}
+    ul{margin-left:20px}
+    section{margin-bottom:30px;padding:20px;background:#ffffff;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+    i{color:#0052cc;margin-right:6px}
+  </style>
+</head>
+<body>
+
+<h1><i class="bi bi-sliders"></i>UD03 · Variables, Outputs y Estado en Terraform</h1>
+<p>Una guía visual y práctica para dominar el uso de <strong>variables</strong>, <strong>outputs</strong> y el <strong>archivo de estado</strong> en tus proyectos con Terraform.</p>
+
+<section>
+<h2><i class="bi bi-gear"></i> 1 · Parametrización en Terraform</h2>
+<ul>
+  <li><i class="bi bi-repeat"></i> <strong>Reutilización:</strong> Cambia valores sin tocar el código.</li>
+  <li><i class="bi bi-box-arrow-up-right"></i> <strong>Escalabilidad:</strong> Úsame en diferentes entornos.</li>
+</ul>
+<pre><code>variable "imagen" {
+  default = "nginx:latest"
+}
+
+resource "docker_container" "web" {
+  name  = "webserver"
+  image = var.imagen
+}</code></pre>
+<div class="tip"><i class="bi bi-lightbulb"></i> Puedes sobrescribir desde CLI: <code>terraform apply -var="imagen=httpd:latest"</code></div>
+</section>
+
+<section>
+<h2><i class="bi bi-sliders2-vertical"></i> 2 · Variables</h2>
+<p>Define parámetros reutilizables:</p>
+<pre><code>variable "puerto_externo" {
+  type    = number
+  default = 8080
+}</code></pre>
+<ul>
+  <li><i class="bi bi-type"></i> Tipos: <code>string</code>, <code>number</code>, <code>bool</code>, <code>list</code>, <code>map</code>, <code>object</code>, <code>any</code></li>
+  <li><i class="bi bi-file-earmark-text"></i> <strong>.tfvars:</strong> para entornos (dev.tfvars, prod.tfvars...)</li>
+</ul>
+<div class="ok"><i class="bi bi-check2-circle"></i> CLI tiene prioridad más alta: <code>-var="clave=valor"</code></div>
+
+<h3><i class="bi bi-shield-check"></i> Validación</h3>
+<pre><code>variable "imagen" {
+  type = string
+  validation {
+    condition     = contains(["nginx:latest", "httpd:latest"], var.imagen)
+    error_message = "Solo nginx o httpd están permitidos"
+  }
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-braces-asterisk"></i> 3 · Locals</h2>
+<p>Valores internos reutilizables para evitar repetición:</p>
+<pre><code>locals {
+  prefijo = "${var.project}-${var.env}"
+}</code></pre>
+<ul>
+  <li><i class="bi bi-check-circle"></i> Código más limpio</li>
+  <li><i class="bi bi-calculator"></i> Cálculos y condiciones</li>
+</ul>
+<pre><code>locals {
+  imagen = var.env == "prod" ? "nginx:stable" : "nginx:alpine"
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-box-arrow-in-down"></i> 4 · Outputs</h2>
+<p>Valores de salida tras aplicar infraestructura:</p>
+<pre><code>output "ip_publica" {
+  value = aws_instance.web.public_ip
+}</code></pre>
+<ul>
+  <li><i class="bi bi-terminal"></i> Ver: <code>terraform output</code></li>
+  <li><i class="bi bi-file-lock"></i> Sensible: <code>sensitive = true</code></li>
+</ul>
+<pre><code>output "secret" {
+  value     = random_password.secret.result
+  sensitive = true
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-file-earmark-lock2"></i> 5 · Estado (terraform.tfstate)</h2>
+<p>Archivo donde Terraform guarda lo que existe realmente:</p>
+<ul>
+  <li><i class="bi bi-eye"></i> Ver con <code>terraform show</code></li>
+  <li><i class="bi bi-terminal"></i> Ver recursos: <code>terraform state list</code></li>
+</ul>
+<h3><i class="bi bi-cloud-upload"></i> Estado remoto</h3>
+<pre><code>terraform {
+  backend "s3" {
+    bucket = "tf-estado"
+    key    = "dev/infra.tfstate"
+    region = "us-east-1"
+  }
+}</code></pre>
+<div class="warn"><i class="bi bi-exclamation-triangle"></i> Nunca subas <code>terraform.tfstate</code> a Git ❌</div>
+</section>
+
+<section>
+<h2><i class="bi bi-puzzle"></i> 6 · Providers útiles: random & templatefile</h2>
+
+<h3><i class="bi bi-shuffle"></i> Provider random</h3>
+<pre><code>resource "random_pet" "name" {
+  length = 2
+}
+output "nombre" {
+  value = random_pet.name.id
+}</code></pre>
+
+<h3><i class="bi bi-filetype-txt"></i> templatefile()</h3>
+<p>Usa archivos <code>.tmpl</code> externos con variables:</p>
+<pre><code>locals {
+  mensaje = templatefile("${path.module}/saludo.tmpl", {
+    nombre = "Carlos"
+    id     = "123"
+  })
+}</code></pre>
+</section>
+
+<section>
+<h2><i class="bi bi-stars"></i> Bonus: Funciones útiles</h2>
+<ul>
+  <li><code>join("-", ["web", "01"])</code> → <code>"web-01"</code></li>
+  <li><code>format("srv-%03d", 7)</code> → <code>"srv-007"</code></li>
+  <li><code>file("config.json")</code> → contenido del archivo</li>
+</ul>
+</section>
+
+<p style="text-align:center;color:#0052cc;margin-top:40px"><i class="bi bi-mortarboard"></i> Cheat Sheet UD03</p>
+</body>
+</html>

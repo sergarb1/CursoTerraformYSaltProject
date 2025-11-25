@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cheat Sheet · UD02 – Terraform con Docker y Vagrant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <style>
+    body{margin:0;font-family:'Inter',sans-serif;background:#f9fafc;color:#1e1e1e;line-height:1.6;padding:24px}
+    h1,h2,h3{color:#0052cc}
+    h1{font-size:2em;margin-bottom:0.3em}
+    h2{border-bottom:2px solid #e5e7eb;padding-bottom:0.2em;margin-top:1em}
+    code,pre{background:#f0f2f5;color:#111;padding:4px 6px;border-radius:6px;font-size:0.9em}
+    pre{padding:12px;overflow-x:auto}
+    .tip{background:#e8f2ff;border-left:4px solid #0052cc;padding:10px;border-radius:8px;margin:10px 0}
+    .warn{background:#fff6e5;border-left:4px solid #ff9f1c;padding:10px;border-radius:8px;margin:10px 0}
+    .ok{background:#e8f8f0;border-left:4px solid #2ecc71;padding:10px;border-radius:8px;margin:10px 0}
+    ul{margin-left:20px}
+    section{margin-bottom:30px;padding:20px;background:#ffffff;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.05)}
+    i{color:#0052cc;margin-right:6px}
+  </style>
+</head>
+<body>
+<h1><i class="bi bi-boxes"></i>UD02 · Terraform con Docker y Vagrant</h1>
+<p>Guía visual para dominar <strong>Terraform en entornos locales</strong> usando <strong>Docker</strong> y <strong>Vagrant</strong> con ejemplos reales y mejores prácticas.</p>
+
+<section id="intro">
+<h2><i class="bi bi-house-gear"></i> 1 · Terraform en entornos locales</h2>
+<p><strong>¿Por qué local?</strong> Aprender Terraform sin gastar en la nube ☁️ usando proveedores locales:</p>
+<ul>
+  <li><i class="bi bi-person-walking"></i> Simulación de entornos reales sin coste.</li>
+  <li><i class="bi bi-wrench"></i> Ideal para pruebas, educación y laboratorios locales.</li>
+</ul>
+<div class="tip"><i class="bi bi-lightbulb"></i> Usa Docker y Vagrant para reforzar habilidades IaC sin salir de tu PC 💻</div>
+</section>
+
+<section id="docker">
+<h2><i class="bi bi-droplet-half"></i> 2 · Terraform + Docker</h2>
+<p><strong>Proveedor oficial:</strong> <code>kreuzwerker/docker</code></p>
+<p>Ejemplo completo:</p>
+<pre><code>terraform {
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = ">= 2.20.0"
+    }
+  }
+}
+
+provider "docker" {}
+
+resource "docker_image" "nginx" {
+  name = "nginx:latest"
+}
+
+resource "docker_container" "nginx" {
+  name  = "web-nginx"
+  image = docker_image.nginx.name
+  ports {
+    internal = 80
+    external = 8080
+  }
+}</code></pre>
+<div class="ok"><i class="bi bi-check2"></i> Accede a <a href="http://localhost:8080" target="_blank">localhost:8080</a> para ver Nginx en acción</div>
+
+<h3><i class="bi bi-folder2-open"></i> Volúmenes</h3>
+<pre><code>resource "docker_volume" "nginx_data" {
+  name = "nginx_data"
+}
+
+resource "docker_container" "nginx" {
+  ...
+  volumes {
+    volume_name    = docker_volume.nginx_data.name
+    container_path = "/usr/share/nginx/html"
+  }
+}</code></pre>
+</section>
+
+<section id="vagrant">
+<h2><i class="bi bi-pc-display"></i> 3 · Terraform + Vagrant</h2>
+<p><strong>Simula máquinas completas</strong> con VirtualBox.</p>
+<p>Provider: <code>bmatcuk/vagrant</code></p>
+<pre><code>resource "vagrant_vm" "default" {
+  name   = "tf-vagrant-vm"
+  box    = "ubuntu/bionic64"
+  cpus   = 1
+  memory = 1024
+}</code></pre>
+<p><strong>Outputs:</strong></p>
+<pre><code>output "vm_name" {
+  value = vagrant_vm.default.name
+}</code></pre>
+
+<div class="tip"><i class="bi bi-lightbulb"></i> Alternativa universal: usa <code>null_resource</code> + <code>local-exec</code> con <code>vagrant up</code></div>
+</section>
+
+<section id="winbox">
+<h2><i class="bi bi-windows"></i> 4 · Box Windows 10 en Vagrant</h2>
+<p>Usa box de evaluación:</p>
+<code>gusztavvargadr/windows-10</code>
+<pre><code>Vagrant.configure("2") do |config|
+  config.vm.box = "gusztavvargadr/windows-10"
+  config.vm.communicator = "winrm"
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "win10-eval"
+    vb.memory = 4096
+    vb.cpus = 2
+  end
+  config.vm.network "forwarded_port", guest: 3389, host: 3389, id: "rdp"
+  config.winrm.username = "vagrant"
+  config.winrm.password = "vagrant"
+end</code></pre>
+<div class="warn"><i class="bi bi-exclamation-triangle"></i> Requiere mucha RAM y CPUs. Úsalo solo si lo necesitas 🧠</div>
+</section>
+
+<section id="comparativa">
+<h2><i class="bi bi-diagram-3"></i> 5 · Comparativa Docker vs Vagrant</h2>
+<ul>
+  <li><i class="bi bi-clock"></i> Docker: rápido, ligero → ideal para microservicios.</li>
+  <li><i class="bi bi-cpu"></i> Vagrant: completo, realista → ideal para entornos complejos o GUI.</li>
+</ul>
+<table border="1" style="width:100%;text-align:left;border-collapse:collapse;">
+  <thead>
+    <tr style="background:#e5e7eb;">
+      <th>Característica</th><th>Docker 🐳</th><th>Vagrant 📦</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Velocidad</td><td>⚡ Milisegundos</td><td>🐢 30-90 segundos</td></tr>
+    <tr><td>Aislamiento</td><td>Medio</td><td>Alto (kernel separado)</td></tr>
+    <tr><td>Consumo</td><td>Bajo</td><td>Alto</td></tr>
+    <tr><td>GUI / Escritorios</td><td>✖</td><td>✔</td></tr>
+    <tr><td>Testing de servicios</td><td>✔</td><td>✖</td></tr>
+  </tbody>
+</table>
+</section>
+
+<section id="mixto">
+<h2><i class="bi bi-layers"></i> 6 · ¿Usar ambos? ¡Sí!</h2>
+<p><strong>Terraform + Docker + Vagrant</strong> en un solo proyecto.</p>
+<pre><code>/infra
+├── main.tf
+├── /docker/nginx_container.tf
+└── /vagrant/windows_vm.tf</code></pre>
+<ul>
+  <li><i class="bi bi-link-45deg"></i> Comunícalos por red privada</li>
+  <li><i class="bi bi-arrow-repeat"></i> Un solo <code>terraform apply</code></li>
+</ul>
+<div class="ok"><i class="bi bi-check-circle"></i> Laboratorios completos, híbridos y reproducibles</div>
+</section>
+
+<p style="text-align:center;color:#0052cc;margin-top:40px"><i class="bi bi-mortarboard"></i> Cheat Sheet UD02</p>
+</body>
+</html>

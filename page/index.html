@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraform & Salt Project - Sergi García Barea</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfcfd; color: #1e293b; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .content-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 0.5rem; }
+        audio { height: 24px; width: 150px; opacity: 0.6; }
+        [v-cloak] { display: none; }
+        .res-icon { margin-right: 0.5rem; font-style: normal; display: inline-block; width: 1.2em; text-align: center; }
+    </style>
+</head>
+<body class="antialiased text-sm">
+
+<div id="app" v-cloak class="min-h-screen flex flex-col lg:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-56 bg-white border-r border-slate-200 p-6 flex flex-col sticky top-0 h-auto lg:h-screen">
+        <div class="flex items-center gap-2 mb-8">
+            <img src="assets/terraform.svg" alt="T" class="w-6 h-6">
+            <h1 class="font-bold text-slate-900 leading-tight text-[10px] uppercase tracking-wider">Terraform & Salt</h1>
+        </div>
+        
+        <nav class="flex-1 space-y-1 overflow-y-auto">
+            <a v-for="i in 7" :key="i" :href="'#u' + i" class="block py-1 px-2 text-xs text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded">
+                <span class="mono opacity-50 mr-1">0{{i}}</span> Unidad 0{{i}}
+            </a>
+        </nav>
+
+        <div class="mt-8 pt-4 border-t border-slate-100">
+            <p class="text-[9px] font-bold text-slate-400 uppercase mb-1">Autor</p>
+            <p class="text-xs font-semibold text-slate-800 mb-3">Sergi García Barea</p>
+            <img src="assets/cc-by-sa.svg" alt="CC" class="w-12 mb-1 opacity-60">
+            <p class="text-[8px] text-slate-400 uppercase">CC BY-SA 4.0</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 lg:p-8 max-w-4xl">
+        <header class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Repositorio del Curso</h2>
+        </header>
+
+        <div class="space-y-2">
+            
+            <!-- Unidad 01 -->
+            <section id="u1" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">01</span> Fundamentos de Terraform</h3>
+                    <audio src="../PodcastRepaso/Unidad 01 - Introducción y fundamentos de Terraform.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 01 - Introducción y fundamentos de Terraform/Unidad 01.01 - Introducción y fundamentos de Terraform.pdf" class="hover:text-blue-600">Introducción y lenguaje HCL</a></div>
+                    <div><i class="res-icon">🔬</i><a href="../Unidad 01 - Introducción y fundamentos de Terraform/Unidad 01.02 - Caso practico 01.pdf" class="hover:text-blue-600">Caso Práctico 01</a></div>
+                    <div><i class="res-icon">📝</i><a href="../Unidad 01 - Introducción y fundamentos de Terraform/Unidad 01.03 - Actividades entregables.pdf" class="hover:text-blue-600">Evaluación UD01</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 01 - Introducción y fundamentos de Terraform/UD01-Caso01.zip" class="text-blue-600 font-medium">Código Lab 01 (ZIP)</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 02 -->
+            <section id="u2" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">02</span> Docker y Vagrant</h3>
+                    <audio src="../PodcastRepaso/Unidad 02 - Terraform con Docker y Vagrant.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 02 - Terraform con Docker y Vagrant/Unidad 02.01 - Terraform con Docker y Vagrant.pdf" class="hover:text-blue-600">Uso de Docker y Vagrant</a></div>
+                    <div><i class="res-icon">🔬</i><a href="../Unidad 02 - Terraform con Docker y Vagrant/Unidad 02.02 - Caso practico 01.pdf" class="hover:text-blue-600">Caso 01: Docker</a></div>
+                    <div><i class="res-icon">🔬</i><a href="../Unidad 02 - Terraform con Docker y Vagrant/Unidad 02.03 - Caso practico 02.pdf" class="hover:text-blue-600">Caso 02: Vagrant</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 02 - Terraform con Docker y Vagrant/UD02-Caso01.zip" class="text-blue-600 font-medium">Código Lab Docker (ZIP)</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 03 -->
+            <section id="u3" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">03</span> Variables y Estado</h3>
+                    <audio src="../PodcastRepaso/Unidad 03 - Variables, outputs y estado en Terraform.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 03 - Variables, outputs y estado en Terraform/Unidad 03.01 - Variables, outputs y estado en Terraform.pdf" class="hover:text-blue-600">Gestión de variables y estado</a></div>
+                    <div><i class="res-icon">⭐</i><a href="../Unidad 03 - Variables, outputs y estado en Terraform/Unidad 03 - CheatSheet.pdf" class="hover:text-blue-600">Chuleta rápida UD03</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 04 -->
+            <section id="u4" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">04</span> Bucles y Dependencias</h3>
+                    <audio src="../PodcastRepaso/Unidad 04 - Bloques avanzados, bucles y dependencias en Terraform.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 04 - Bloques avanzados, bucles y dependencias en Terraform/Unidad 04.01 - Bloques avanzados, bucles y dependencias en Terraform.pdf" class="hover:text-blue-600">Bucles y dependencias avanzadas</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 04 - Bloques avanzados, bucles y dependencias en Terraform/UD04-Caso01.zip" class="text-blue-600 font-medium">Lab Bucles (ZIP)</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 04 - Bloques avanzados, bucles y dependencias en Terraform/UD04-Caso02.zip" class="text-blue-600 font-medium">Lab Dependencias (ZIP)</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 05 -->
+            <section id="u5" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">05</span> Integración Salt Project</h3>
+                    <audio src="../PodcastRepaso/Unidad 05 - Integración de Terraform y Salt Project.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 05 - Integración de Terraform y Salt Project/Unidad 05.01 - Integración de Terraform y Salt Project.pdf" class="hover:text-blue-600">Integración con Salt Project</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 05 - Integración de Terraform y Salt Project/UD05-Caso01.zip" class="text-blue-600 font-medium">Infra Salt (ZIP)</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 06 -->
+            <section id="u6" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">06</span> Monitorización</h3>
+                    <audio src="../PodcastRepaso/Unidad 06 - Monitorización con Prometheus y Grafana.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 06 - Monitorización con Prometheus y Grafana/Unidad 06.01 - Monitorización con Prometheus y Grafana.pdf" class="hover:text-blue-600">Prometheus y Grafana</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 06 - Monitorización con Prometheus y Grafana/UD06-Caso01.zip" class="text-blue-600 font-medium">Stack Prometheus (ZIP)</a></div>
+                </div>
+            </section>
+
+            <!-- Unidad 07 -->
+            <section id="u7" class="content-card">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-50 pb-2">
+                    <h3 class="font-bold text-slate-800 text-base"><span class="text-blue-500 mr-2">07</span> AWS LocalStack</h3>
+                    <audio src="../PodcastRepaso/Unidad 07 - Terraform y LocalStack para simular Amazon Web Services.mp3" controls></audio>
+                </div>
+                <div class="grid md:grid-cols-2 gap-x-8 gap-y-1 text-xs">
+                    <div><i class="res-icon">📖</i><a href="../Unidad 07 - Terraform y LocalStack para simular Amazon Web Services/Unidad 07.01 - Terraform y LocalStack para simular Amazon Web Services.pdf" class="hover:text-blue-600">Simulación con LocalStack</a></div>
+                    <div><i class="res-icon">📦</i><a href="../Unidad 07 - Terraform y LocalStack para simular Amazon Web Services/UD07-Caso01.zip" class="text-blue-600 font-medium">Recursos Cloud (ZIP)</a></div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="mt-12 pt-6 border-t border-slate-200 text-slate-400 text-[9px] uppercase tracking-widest">
+            &copy; 2026 Sergi García Barea. Licencia CC BY-SA 4.0.
+        </footer>
+    </main>
+</div>
+
+<script>
+    const { createApp } = Vue;
+    createApp({}).mount('#app');
+</script>
+
+</body>
+</html>

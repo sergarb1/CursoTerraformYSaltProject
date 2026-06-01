@@ -1,8 +1,13 @@
-# Curso Terraform y Salt Project
-
 <p align="center">
-  👉 <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/"><strong><big>🌐 GitHub Pages — Ver curso online</big></strong></a> 👈
+  <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/">
+    <img src="https://img.shields.io/badge/Terraform-844fba?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform">
+    <img src="https://img.shields.io/badge/Salt%20Project-00d2a0?style=for-the-badge&logo=saltproject&logoColor=white" alt="Salt Project">
+  </a>
 </p>
+
+<h1 align="center">
+  <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/">Curso Terraform y Salt Project</a>
+</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/estado-activo-22c55e?style=flat-square" alt="Estado: Activo">
@@ -12,7 +17,11 @@
   <img src="https://img.shields.io/badge/salt-3006-00d2a0?style=flat-square&logo=saltproject&logoColor=white" alt="Salt 3006">
 </p>
 
-> **Actualizado:** 01/06/2026
+> **Actualizado:** 01/06/2026 · Repositorio del curso *Terraform & Salt Project*
+
+<p align="center">
+  👉 <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/"><strong><big>🌐 GitHub Pages — Ver curso online</big></strong></a> 👈
+</p>
 
 Repositorio del curso *Terraform & Salt Project*, diseñado para aprender infraestructura como código y automatización de configuración desde un enfoque práctico y progresivo.  
 Cada unidad incluye contenidos teóricos, casos prácticos guiados, ejemplos reproducibles y materiales complementarios orientados al entorno profesional y educativo de Formación Profesional en Informática.

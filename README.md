@@ -20,7 +20,7 @@
 > **Actualizado:** 01/06/2026 · Repositorio del curso *Terraform & Salt Project*
 
 <p align="center">
-  👉 <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/"><strong><big>🌐 GitHub Pages — Ver curso online</big></strong></a> 👈
+  👉 <a href="https://sergarb1.github.io/CursoTerraformYSaltProject/"><strong><big>🌐 Curso Terraform y Salt Project — Ver curso online</big></strong></a> 👈
 </p>
 
 Repositorio del curso *Terraform & Salt Project*, diseñado para aprender infraestructura como código y automatización de configuración desde un enfoque práctico y progresivo.  
